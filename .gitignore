@@ -369,3 +369,11 @@ core.*
 *.png
 *.jpeg
 
+./hr/code/__pycache__/
+*.pyc
+
+./hr/code/networks/__pycache__/
+
+*.pth
+./hr/code/log/satrn/tensorboard/
+./hr/code/log/satrnV1/tensorboard/
