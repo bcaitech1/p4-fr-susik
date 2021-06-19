@@ -1,7 +1,7 @@
 # OCR Chrome Extension
 
 ## demo
-<p align="center"><img src="https://user-images.githubusercontent.com/19266698/122655191-a42cf080-d18b-11eb-9a98-1404cbb10fbd.gif"></p>
+<p align="center"><img src="demo.GIF"></p>
 
 ## 실행
 ### Server (server 폴더)
