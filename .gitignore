@@ -366,7 +366,6 @@ core.*
 
 # dataset
 *.jpg
-*.png
 *.jpeg
 
 __pycache__/
