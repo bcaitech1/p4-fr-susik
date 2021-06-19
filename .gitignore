@@ -369,11 +369,9 @@ core.*
 *.png
 *.jpeg
 
-./hr/code/__pycache__/
-*.pyc
-
-./hr/code/networks/__pycache__/
-
-*.pth
-./hr/code/log/satrn/tensorboard/
-./hr/code/log/satrnV1/tensorboard/
+__pycache__/
+._*.py
+hyeryeong/code/submit/
+hyeryeong/code/log
+hyeryeong/input/data/eval_dataset/images/
+hyeryeong/input/data/train_dataset/images/
