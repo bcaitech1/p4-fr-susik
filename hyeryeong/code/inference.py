@@ -85,8 +85,12 @@ def main(parser):
         _, sequence = torch.topk(decoded_values, 1, dim=1)
         sequence = sequence.squeeze(1)
         sequence_str = id_to_string(sequence, test_data_loader, do_eval=1)
+        print()
+        print("sequece_str :", sequence_str)
+        print()
         for path, predicted in zip(d["file_path"], sequence_str):
             results.append((path, predicted))
+            print("predicted :", predicted)
 
     os.makedirs(parser.output_dir, exist_ok=True)
     with open(os.path.join(parser.output_dir, "output.csv"), "w") as w:
