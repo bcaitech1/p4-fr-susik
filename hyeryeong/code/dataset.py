@@ -5,6 +5,14 @@ import torch
 from PIL import Image, ImageOps
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
+import cv2
+from skimage.filters import threshold_otsu, threshold_local
+from skimage import data
+from skimage.morphology import binary_closing
+from PIL import Image, ImageFilter
+from skimage.filters import gaussian
+from skimage.morphology import disk
+from skimage.filters import median
 
 START = "<SOS>"
 END = "<EOS>"
@@ -139,6 +147,14 @@ class LoadDataset(Dataset):
             image = image.convert("RGB")
         elif self.rgb == 1:
             image = image.convert("L")
+        elif self.rgb == 0: # to binary
+            image = numpy.array(image)
+            block_size = 55
+            adaptive_thresh = threshold_local(image, block_size, offset=3)
+            binary_adaptive = image > adaptive_thresh
+            closing = binary_closing(binary_adaptive, selem=np.ones((3,2)))
+            med = median(closing, selem=np.ones((15,5)))
+            image = Image.fromarray(med)
         else:
             raise NotImplementedError
 
@@ -206,6 +222,14 @@ class LoadEvalDataset(Dataset):
             image = image.convert("RGB")
         elif self.rgb == 1:
             image = image.convert("L")
+        elif self.rgb == 0: # to binary
+            image = numpy.array(image)
+            block_size = 55
+            adaptive_thresh = threshold_local(image, block_size, offset=3)
+            binary_adaptive = image > adaptive_thresh
+            closing = binary_closing(binary_adaptive, selem=np.ones((3,2)))
+            med = median(closing, selem=np.ones((15,5)))
+            image = Image.fromarray(med)
         else:
             raise NotImplementedError
 
@@ -223,7 +247,7 @@ class LoadEvalDataset(Dataset):
 def dataset_loader(options, transformed):
 
     # Read data
-    train_data, valid_data = [], [] 
+    train_data, valid_data = [], []
     if options.data.random_split:
         for i, path in enumerate(options.data.train):
             prop = 1.0
@@ -266,3 +290,4 @@ def dataset_loader(options, transformed):
     )
 
     return train_data_loader, valid_data_loader, train_dataset, valid_dataset
+
