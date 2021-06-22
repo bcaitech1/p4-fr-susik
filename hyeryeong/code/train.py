@@ -28,8 +28,8 @@ from scheduler import CircularLRBeta
 from metrics import word_error_rate,sentence_acc
 
 import torchvision.transforms.functional as F
-#import albumentations as A
-#from albumentations.pytorch import ToTensorV2
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
 import cv2
 
 class SquarePad:
@@ -39,8 +39,8 @@ class SquarePad:
         #hp = int((max_wh - w) / 2)
         #vp = int((max_wh - h) / 2)
         #padding = (hp, vp, hp, vp)
-        padding = (20, 10, 15, 10)
-        return F.pad(image, padding, 255, 'constant')
+        padding = (25, 25, 15, 25)
+        return F.pad(image, padding, (255, 255, 255), 'constant')
 
 def id_to_string(tokens, data_loader,do_eval=0):
     result = []
@@ -240,12 +240,14 @@ def main(config_file):
             # Resize so all images have the same size
             # in aspect ratio
             transforms.Resize((options.input_size.height, options.input_size.width)),
+            # A.Resize(options.input_size.height, options.input_size.width, p = 1.0),
             SquarePad(),
-            transforms.RandomRotation(degrees=(-5, 5)), # degree
+            transforms.RandomRotation(degrees=(10)), # degree
             # A.Rotate(limit=5, border_mode=cv2.BORDER_REPLICATE, p=0.5),
             # A.GaussNoise(p=0.5),
-            transforms.GaussianBlur(3),
+            # transforms.GaussianBlur(3),
             transforms.ToTensor(),
+            #ToTensorV2()
         ]
     )
     train_data_loader, validation_data_loader, train_dataset, valid_dataset = dataset_loader(options, transformed)
