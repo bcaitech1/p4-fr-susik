@@ -160,6 +160,24 @@ class DeepCNN300(nn.Module):
         out_before_trans2 = self.trans2_relu(self.trans2_norm(out))
         out_A = self.trans2_conv(out_before_trans2)
         return out_A  # 128 x (16x16)
+    
+class ShallowCNN(nn.Module):
+    def __init__(self, in_channels, hidden_dim):
+        super(ShallowCNN, self).__init__()
+
+        self.conv_1 = nn.Conv2d(in_channels, hidden_dim // 2, kernel_size=3, stride=1, padding=1)
+        self.bn_1 = nn.BatchNorm2d(hidden_dim // 2)
+        self.pool_1 = nn.MaxPool2d(kernel_size=2, stride=2)
+
+        self.conv_2 = nn.Conv2d(hidden_dim // 2, hidden_dim, kernel_size=3, stride=1, padding=1)
+        self.bn_2 = nn.BatchNorm2d(hidden_dim)
+        self.pool_2 = nn.MaxPool2d(kernel_size=2, stride=2)
+
+    def forward(self, x):
+        out = self.pool_1(self.bn_1(self.conv_1(x)))
+        out = self.pool_2(self.bn_2(self.conv_2(out)))
+
+        return out
 
 
 class ScaledDotProductAttention(nn.Module):
@@ -341,12 +359,15 @@ class TransformerEncoderFor2DFeatures(nn.Module):
     ):
         super(TransformerEncoderFor2DFeatures, self).__init__()
 
-        self.shallow_cnn = DeepCNN300(
-            input_size,
-            num_in_features=48,
-            output_channel=hidden_dim,
-            dropout_rate=dropout_rate,
-        )
+#         self.shallow_cnn = DeepCNN300(
+#             input_size,
+#             num_in_features=48,
+#             output_channel=hidden_dim,
+#             dropout_rate=dropout_rate,
+#         )
+
+        self.shallow_cnn = ShallowCNN(in_channels=in_channels, hidden_dim=hidden_dim)
+    
         self.positional_encoding = PositionalEncoding2D(hidden_dim)
         self.attention_layers = nn.ModuleList(
             [
